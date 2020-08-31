@@ -8,5 +8,5 @@ import (
 )
 
 func languages(ctx *gin.Context) {
-	ctx.JSON(http.StatusOK, config.Config.Languages)
+	ctx.JSON(http.StatusOK, config.Languages)
 }

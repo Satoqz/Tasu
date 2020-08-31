@@ -8,5 +8,6 @@ import (
 )
 
 func containers(ctx *gin.Context) {
+	docker.RefreshContainers()
 	ctx.JSON(http.StatusOK, docker.Containers)
 }

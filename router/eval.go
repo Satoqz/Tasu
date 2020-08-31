@@ -17,7 +17,7 @@ type evalRequest struct {
 
 func validLanguage(language *string) (result bool) {
 	result = false
-	for _, val := range config.Config.Languages {
+	for _, val := range config.Languages {
 		if val == *language {
 			result = true
 			return
@@ -49,8 +49,8 @@ func eval(ctx *gin.Context) {
 		return
 	}
 
-	if container.Restarting {
-		ctx.JSON(http.StatusServiceUnavailable, gin.H{"error": "Container currently restarting"})
+	if !container.Alive {
+		ctx.JSON(http.StatusServiceUnavailable, gin.H{"error": "Currently waiting for container restart"})
 		return
 	}
 
@@ -98,18 +98,4 @@ func eval(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"output": res})
-
-	container = docker.Containers[containerName]
-	container.Uses++
-	docker.Containers[containerName] = docker.ContainerStruct{
-		Uses:       container.Uses,
-		Restarting: container.Restarting,
-		Language:   container.Language,
-	}
-
-	go func() {
-		if container.Uses == config.Config.RestartAfter {
-			docker.RestartContainer(containerName, container)
-		}
-	}()
 }

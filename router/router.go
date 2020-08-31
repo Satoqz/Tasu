@@ -13,7 +13,7 @@ func Setup() {
 	r.GET("/", index)
 	r.GET("languages", languages)
 	r.GET("/containers", containers)
-	r.GET("/cleanup", cleanup)
+	r.GET("/kill", kill)
 	// POST routes
 	r.POST("/eval", eval)
 

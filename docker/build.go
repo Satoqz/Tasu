@@ -10,23 +10,25 @@ import (
 
 // BuildContainers tries to build containers for all languages in config
 func BuildContainers() {
-	for _, language := range config.Config.Languages {
+	for _, language := range config.Languages {
 		buildContainer(language)
 	}
 }
 
 func buildContainer(language string) {
+	containerName := fmt.Sprintf("tasu_%s", language)
 	log.Printf("Building container: %s\n", language)
-	out, err := exec.Command(
+	_, err := exec.Command(
 		"docker",
 		"build",
 		fmt.Sprintf("./languages/%s", language),
 		"-t",
-		fmt.Sprintf("tasu_%s", language),
+		containerName,
 	).Output()
 	if err != nil {
+		log.Printf("Container %s failed to build\n", containerName)
 		log.Fatal(err)
 	} else {
-		log.Printf("%s container: %s\n", language, out)
+		log.Printf("Container built: %s\n", containerName)
 	}
 }

@@ -24,7 +24,7 @@ func StartContainers() {
 	list := strings.Split(res, "\n")
 	list = list[:len(list)-1]
 
-	for _, language := range config.Config.Languages {
+	for _, language := range config.Languages {
 		alreadyStarted := false
 		for _, containerName := range list {
 			if fmt.Sprintf("tasu_%s", language) == containerName {
@@ -35,9 +35,8 @@ func StartContainers() {
 			startContainer(language)
 		} else {
 			Containers[fmt.Sprintf("tasu_%s", language)] = ContainerStruct{
-				Language:   language,
-				Restarting: false,
-				Uses:       0,
+				Language: language,
+				Alive:    true,
 			}
 		}
 	}
@@ -66,9 +65,8 @@ func startContainer(language string) {
 	} else {
 		log.Printf("Started container: %s\n", language)
 		container := ContainerStruct{
-			Language:   language,
-			Restarting: false,
-			Uses:       0,
+			Language: language,
+			Alive:    true,
 		}
 		Containers[fmt.Sprintf("tasu_%s", language)] = container
 	}
