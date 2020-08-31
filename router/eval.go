@@ -40,45 +40,76 @@ func eval(ctx *gin.Context) {
 		return
 	}
 
+	containerName := fmt.Sprintf("tasu_%s", request.Language)
+
+	container := docker.Containers[containerName]
+
+	if container.Language == "" {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Container not found"})
+		return
+	}
+
+	if container.Restarting {
+		ctx.JSON(http.StatusServiceUnavailable, gin.H{"error": "Container currently restarting"})
+		return
+	}
+
 	snowflake := docker.Snowflake.Generate().String()
 
 	log.Printf("Creating unique eval folder in container: tasu_%s with snowflake id: %s\n", request.Language, snowflake)
 	res, err := docker.Run([]string{
 		"exec",
-		fmt.Sprintf("tasu_%s", request.Language),
+		containerName,
 		"mkdir",
 		"-p",
 		fmt.Sprintf("eval/%s", snowflake),
 	})
 	if err != nil {
-		log.Fatal(err)
+		ctx.JSON(http.StatusServiceUnavailable, gin.H{"error": "Container currently unavailable"})
+		return
 	}
 
-	log.Printf("Chmod unique eval directory to 777 in container: tasu_%s\n", request.Language)
+	log.Printf("Chmod unique eval directory to 777 in container: %s\n", containerName)
 	res, err = docker.Run([]string{
 		"exec",
-		fmt.Sprintf("tasu_%s", request.Language),
+		containerName,
 		"chmod",
 		"777",
 		fmt.Sprintf("eval/%s", snowflake),
 	})
 	if err != nil {
-		log.Fatal(err)
+		ctx.JSON(http.StatusServiceUnavailable, gin.H{"error": "Container currently unavailable"})
+		return
 	}
 
-	log.Printf("Eval in container: tasu_%s\n", request.Language)
+	log.Printf("Eval in container: %s\n", containerName)
 	res, err = docker.Run([]string{
 		"exec",
 		"-u1001:1001",
 		fmt.Sprintf("-w/tmp/eval/%s", snowflake),
-		fmt.Sprintf("tasu_%s", request.Language),
+		containerName,
 		"/bin/sh",
 		"/var/run/run.sh",
 		request.Code,
 	})
 	if err != nil {
-		log.Fatal(err)
+		ctx.JSON(http.StatusServiceUnavailable, gin.H{"error": "Container currently unavailable"})
+		return
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"output": res})
+
+	container = docker.Containers[containerName]
+	container.Uses++
+	docker.Containers[containerName] = docker.ContainerStruct{
+		Uses:       container.Uses,
+		Restarting: container.Restarting,
+		Language:   container.Language,
+	}
+
+	go func() {
+		if container.Uses == config.Config.RestartAfter {
+			docker.RestartContainer(containerName, container)
+		}
+	}()
 }

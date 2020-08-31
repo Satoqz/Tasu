@@ -7,10 +7,11 @@ import (
 )
 
 type config struct {
-	Languages []string
+	Languages    []string `json:"languages" binding:"required"`
+	RestartAfter uint     `json:"restartAfter" binding:"required"`
 }
 
-// Config stores all available languages in an array
+// Config stores config.json in memory
 var Config config
 
 // LoadConfig loads "config.json" into Config
@@ -23,5 +24,5 @@ func LoadConfig() {
 	}
 
 	json.NewDecoder(configFile).Decode(&Config)
-	log.Println("Successfully loaded config")
+	log.Println("Loaded config")
 }

@@ -1,3 +1,7 @@
 {
-	"languages": ["javascript"]
+	"languages": [
+		"javascript",
+		"brainfuck"
+	],
+	"restartAfter": 20
 }

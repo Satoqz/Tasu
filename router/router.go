@@ -8,11 +8,11 @@ import (
 func Setup() {
 	gin.SetMode(gin.ReleaseMode)
 	r := gin.Default()
+
 	// GET routes
-	r.GET("/", root)
+	r.GET("/", index)
 	r.GET("languages", languages)
 	r.GET("/containers", containers)
-	r.GET("/shutdown", shutdown)
 	r.GET("/cleanup", cleanup)
 	// POST routes
 	r.POST("/eval", eval)

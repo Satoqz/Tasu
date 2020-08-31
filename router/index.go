@@ -6,7 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func root(ctx *gin.Context) {
+func index(ctx *gin.Context) {
 	ctx.String(
 		http.StatusOK,
 		"Welcome to Tasū!",

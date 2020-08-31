@@ -11,12 +11,11 @@ import (
 func main() {
 	config.LoadConfig()
 	for _, arg := range os.Args {
-		if arg == "--startContainers" || arg == "-sc" {
-			docker.StartContainers()
-			break
-		} else if arg == "--buildContainers" || arg == "-bc" {
+		if arg == "--buildContainers" || arg == "-bc" {
 			docker.BuildContainers()
+			break
 		}
 	}
+	docker.StartContainers()
 	router.Setup()
 }
