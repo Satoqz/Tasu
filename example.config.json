@@ -1,6 +1,8 @@
 {
 	"languages": [
 		"javascript",
-		"brainfuck"
-	]
+		"python",
+		"cpp"
+	],
+	"cleanupInterval": "10m"
 }
