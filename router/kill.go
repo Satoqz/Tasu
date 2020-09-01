@@ -1,13 +1,10 @@
 package router
 
 import (
-	"os"
-
 	"github.com/gin-gonic/gin"
-	"github.com/satoqz/tasu/docker"
+	"github.com/satoqz/tasu/containers"
 )
 
 func kill(ctx *gin.Context) {
-	ctx.JSON(200, docker.KillContainers())
-	os.Exit(0)
+	ctx.JSON(200, containers.Kill())
 }

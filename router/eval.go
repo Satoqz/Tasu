@@ -5,9 +5,10 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/bwmarrin/snowflake"
 	"github.com/gin-gonic/gin"
 	"github.com/satoqz/tasu/config"
-	"github.com/satoqz/tasu/docker"
+	"github.com/satoqz/tasu/containers"
 )
 
 type evalRequest struct {
@@ -26,6 +27,16 @@ func validLanguage(language *string) (result bool) {
 	return
 }
 
+func createNode() (node *snowflake.Node) {
+	node, err := snowflake.NewNode(1)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return
+}
+
+var node = createNode()
+
 func eval(ctx *gin.Context) {
 
 	var request evalRequest
@@ -42,7 +53,7 @@ func eval(ctx *gin.Context) {
 
 	containerName := fmt.Sprintf("tasu_%s", request.Language)
 
-	container := docker.Containers[containerName]
+	container := containers.Map[containerName]
 
 	if container.Language == "" {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Container not found"})
@@ -54,10 +65,10 @@ func eval(ctx *gin.Context) {
 		return
 	}
 
-	snowflake := docker.Snowflake.Generate().String()
+	snowflake := node.Generate().String()
 
 	log.Printf("Creating unique eval folder in container: tasu_%s with snowflake id: %s\n", request.Language, snowflake)
-	res, err := docker.Run([]string{
+	res, err := containers.Run([]string{
 		"exec",
 		containerName,
 		"mkdir",
@@ -70,7 +81,7 @@ func eval(ctx *gin.Context) {
 	}
 
 	log.Printf("Chmod unique eval directory to 777 in container: %s\n", containerName)
-	res, err = docker.Run([]string{
+	res, err = containers.Run([]string{
 		"exec",
 		containerName,
 		"chmod",
@@ -83,7 +94,7 @@ func eval(ctx *gin.Context) {
 	}
 
 	log.Printf("Eval in container: %s\n", containerName)
-	res, err = docker.Run([]string{
+	res, err = containers.Run([]string{
 		"exec",
 		"-u1001:1001",
 		fmt.Sprintf("-w/tmp/eval/%s", snowflake),

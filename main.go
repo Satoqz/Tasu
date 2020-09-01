@@ -4,7 +4,7 @@ import (
 	"os"
 
 	"github.com/satoqz/tasu/config"
-	"github.com/satoqz/tasu/docker"
+	"github.com/satoqz/tasu/containers"
 	"github.com/satoqz/tasu/router"
 )
 
@@ -12,19 +12,20 @@ func main() {
 
 	config.LoadConfig()
 
+	// check if containers should be built first
 	for _, arg := range os.Args {
 		if arg == "--buildContainers" || arg == "-bc" {
-			docker.BuildContainers()
+			containers.BuildAll()
 			break
 		}
 	}
 
+	// make a map of containers
+	containers.MakeMap()
 	// start all containers wanted in config
-	docker.StartContainers()
-
+	containers.RestartAll()
 	// start container cleanup interval in different goroutine
-	go docker.StartCleanupInterval()
-
+	go containers.StartCleanupInterval()
 	// finally, start webserver
 	router.Setup()
 }

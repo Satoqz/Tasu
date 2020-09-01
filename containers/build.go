@@ -1,4 +1,4 @@
-package docker
+package containers
 
 import (
 	"fmt"
@@ -8,14 +8,14 @@ import (
 	"github.com/satoqz/tasu/config"
 )
 
-// BuildContainers tries to build containers for all languages in config
-func BuildContainers() {
+// BuildAll tries to build containers for all languages in config
+func BuildAll() {
 	for _, language := range config.Languages {
-		buildContainer(language)
+		build(language)
 	}
 }
 
-func buildContainer(language string) {
+func build(language string) {
 	containerName := fmt.Sprintf("tasu_%s", language)
 	log.Printf("Building container: %s\n", language)
 	_, err := exec.Command(

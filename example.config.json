@@ -1,8 +1,10 @@
 {
 	"languages": [
+		"cpp",
 		"javascript",
-		"python",
-		"cpp"
+		"python"
 	],
-	"cleanupInterval": "10m"
+	"cleanupInterval": "10m",
+	"ram": 128,
+	"swap": 128
 }

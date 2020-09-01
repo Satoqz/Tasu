@@ -10,9 +10,8 @@ func Setup() {
 	r := gin.Default()
 
 	// GET routes
-	r.GET("/", index)
 	r.GET("languages", languages)
-	r.GET("/containers", containers)
+	r.GET("/status", status)
 	r.GET("/kill", kill)
 	// POST routes
 	r.POST("/eval", eval)
