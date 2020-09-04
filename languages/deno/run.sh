@@ -1,4 +1,5 @@
 #!/bin/sh
 set -e
 
-deno eval "$1" || true
+printf %s "$1" > eval.ts
+deno run eval.ts || true

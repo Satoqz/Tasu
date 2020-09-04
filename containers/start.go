@@ -3,17 +3,18 @@ package containers
 import (
 	"fmt"
 	"log"
-	"os/exec"
+	"runtime"
 
 	"github.com/satoqz/tasu/config"
 )
 
 func start(language string) {
-	log.Printf("Starting container: %s\n", language)
-	_, err := exec.Command(
-		"docker",
-		"run",
-		"--runtime=runsc",
+
+	base := []string{"run"}
+	if runtime.GOOS == "windows" {
+		base = append(base, "--runtime=runsc")
+	}
+	cmd := []string{
 		"--rm",
 		fmt.Sprintf("--name=tasu_%s", language),
 		"-u1000:1000",
@@ -25,7 +26,11 @@ func start(language string) {
 		fmt.Sprintf("--memory-swap=%dm", config.SWAP),
 		fmt.Sprintf("tasu_%s:latest", language),
 		"/bin/sh",
-	).Output()
+	}
+	base = append(base, cmd...)
+
+	log.Printf("Starting container: %s\n", language)
+	_, err := Run(base)
 	if err != nil {
 		log.Fatal(err)
 	} else {
