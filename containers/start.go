@@ -11,7 +11,7 @@ import (
 func start(language string) {
 
 	base := []string{"run"}
-	if runtime.GOOS == "windows" {
+	if runtime.GOOS == "linux" {
 		base = append(base, "--runtime=runsc")
 	}
 	cmd := []string{
