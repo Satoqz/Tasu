@@ -25,7 +25,7 @@
 ## Table of Contents
 
 * [Setup](#setup)
-  * [Prepacked binaries/executables](#prepacked-binaries/executables)
+  * [Prepacked binaries/executables](#prepacked-binariesexecutables)
   * [Config](#config)
   * [gVisor](#gvisor)
 * [Routes](#routes)
