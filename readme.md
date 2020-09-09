@@ -7,7 +7,7 @@
   <h1 align="center">Tasū</h1>
 
   <p align="center">
-    Arbitrary code execution server using Docker in Go.
+    Arbitrary code execution server using Docker written in Go.
     <br />
     <strong>
 		Inspired by
