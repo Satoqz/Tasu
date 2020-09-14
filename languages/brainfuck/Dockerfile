@@ -1,12 +1,7 @@
-FROM alpine:latest AS build
-
-RUN apk update && apk add g++
-COPY bf.cpp .
-RUN g++ bf.cpp -o bf
-
 FROM alpine:latest
-LABEL author="1Computer1"
+LABEL author="satoqz"
 
 RUN apk update && apk add libstdc++
-COPY --from=build bf /usr/local/bin/
-COPY run.sh /var/run/
+
+COPY bf /usr/local/bin/
+COPY run.sh /var/run
