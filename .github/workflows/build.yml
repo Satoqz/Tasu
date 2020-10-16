@@ -18,11 +18,27 @@ jobs:
 
       - name: build binary
         run: go build .
+
       - name: create tar.gz
         run: tar -czvf tasu.tar.gz ./tasu ./languages
-      - name: upload artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: tasu.tar.gz
-          path: tasu.tar.gz
 
+      - name: create release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: ${{ github.ref }}
+          draft: false
+          prerelease: false
+
+      - name: upload release asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./tasu.tar.gz
+          asset_name: tasu.tar.gz
+          asset_content_type: application/zip
