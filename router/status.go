@@ -8,6 +8,5 @@ import (
 )
 
 func status(ctx *gin.Context) {
-	containers.RefreshMap()
 	ctx.JSON(http.StatusOK, containers.Map)
 }
