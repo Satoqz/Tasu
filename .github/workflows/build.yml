@@ -20,8 +20,8 @@ jobs:
         run: go build .
       - name: create tar.gz
         run: tar -czvf languages ./tasu
-      - name: upload artifacts
-        uses: actions/upload-artifacts@v2
+      - name: upload artifact
+        uses: actions/upload-artifact@v2
         with:
           name: tasu
           path: tasu.tar.gz
