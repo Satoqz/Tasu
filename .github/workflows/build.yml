@@ -23,6 +23,6 @@ jobs:
       - name: upload artifact
         uses: actions/upload-artifact@v2
         with:
-          name: tasu
+          name: tasu.tar.gz
           path: tasu.tar.gz
 
