@@ -1,20 +1,25 @@
 package main
 
 import (
-	"os"
+	"flag"
 
 	"github.com/satoqz/tasu/config"
 	"github.com/satoqz/tasu/containers"
 	"github.com/satoqz/tasu/router"
 )
 
-func main() {
+var doBuild = []*bool{
+	flag.Bool("buildContainers", false, "Build all containers before startup"),
+	flag.Bool("bc", false, "Build all containers before startup"),
+}
 
+func main() {
+	flag.Parse()
 	config.LoadConfig()
 
-	// check if containers should be built first
-	for _, arg := range os.Args {
-		if arg == "--buildContainers" || arg == "-bc" {
+	// check flags if containers should be built first
+	for _, v := range doBuild {
+		if *v == true {
 			containers.BuildAll()
 			break
 		}
